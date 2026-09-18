@@ -1,21 +1,33 @@
-import pandas as pd
-import seaborn as sns
+def calculate_summary_statistics(
+    df: pd.DataFrame | None = None,
+) -> dict[str, pd.Series | pd.DataFrame]:
+    """Loads Iris dataset (if none provided), calculates means, standard deviations,
 
-# 1. Load the Iris dataset
-df = sns.load_dataset("iris")
+    and correlation matrix for numeric columns, prints and returns them.
+    """
+    # 1. Load default dataset if none provided
+    if df is None:
+        df = sns.load_dataset("iris")
 
-# 2. Extract numeric columns (excluding the categorical 'species' column)
-numeric_df = df.drop(columns=["species"])
+    # 2. Select numeric columns (handles any non-numeric columns automatically)
+    numeric_df = df.select_dtypes(include="number")
 
-# 3. Calculate Summary Statistics
-means = numeric_df.mean()
-std_devs = numeric_df.std()
-correlation_matrix = numeric_df.corr()
+    # 3. Compute statistics
+    means = numeric_df.mean()
+    std_devs = numeric_df.std()
+    correlation_matrix = numeric_df.corr()
 
-# 4. Display Results
-print("=== MEANS ===")
-print(means)
-print("\n=== STANDARD DEVIATIONS ===")
-print(std_devs)
-print("\n=== CORRELATION MATRIX ===")
-print(correlation_matrix)
+    # 4. Display Results
+    print("=== MEANS ===")
+    print(means.round(3))
+    print("\n=== STANDARD DEVIATIONS ===")
+    print(std_devs.round(3))
+    print("\n=== CORRELATION MATRIX ===")
+    print(correlation_matrix.round(3))
+
+    # 5. Return results in a structured dictionary
+    return {
+        "means": means,
+        "std_devs": std_devs,
+        "correlation_matrix": correlation_matrix,
+    }
